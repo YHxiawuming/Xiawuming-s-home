@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f7f7f5;color:#2a2a2a;line-height:1.8;max-width:720px;margin:0 auto;padding:0 24px 80px}
+header{position:sticky;top:0;background:rgba(247,247,245,0.95);border-bottom:1px solid #e0e0e0;padding:16px 0;margin-bottom:40px}
+nav{display:flex;gap:20px;justify-content:center}
+nav a{color:#6b6b6b;text-decoration:none;font-size:14px}
+nav a:hover{color:#3d6b5e}
+section{display:none}
+section.active{display:block}
+h2{font-family:serif;font-size:22px;margin-bottom:24px;padding-bottom:8px;border-bottom:1px solid #e0e0e0}
+.card{background:#fff;border:1px solid #e0e0e0;padding:20px;margin-bottom:16px}
+.date{font-size:13px;color:#6b6b6b}
+#home{text-align:center;padding:80px 24px}
+#home p{font-family:serif;font-size:24px;margin-bottom:16px}
+#home small{color:#6b6b6b}
+</style>
+</head>
+<body>
+<header><nav id="n"></nav></header>
+<main>
+<div id="l">加载中...</div>
+<section id="home"><p id="q"></p><small id="s"></small></section>
+<section id="thoughts"><h2>思考</h2><div id="t"></div></section>
+<section id="works"><h2>作品</h2><div id="w"></div></section>
+<section id="about"><h2>关于</h2><div class="card" id="a"></div></section>
+</main>
+<script>
+fetch('./content.json').then(r=>r.json()).then(d=>{
+document.getElementById('l').style.display='none'
+document.title=d.site.name
+let h=''
+d.nav.forEach(i=>h+=`<a href="#" onclick="x('${i.id}');return false">${i.label}</a>`)
+document.getElementById('n').innerHTML=h
+document.getElementById('q').textContent=d.home.quote
+document.getElementById('s').textContent=d.home.subquote
+let t=''
+d.thoughts.forEach(i=>t+=`<div class="card"><div style="font-family:serif;font-size:17px;font-weight:600">${i.title}</div><div class="date">${i.date}</div><div style="color:#6b6b6b;font-size:14px">${i.summary}</div></div>`)
+document.getElementById('t').innerHTML=t
+let w=''
+d.works.forEach(i=>w+=`<div class="card"><span style="font-size:12px;color:#3d6b5e;background:#e8f0ed;padding:2px 8px">${i.category}</span><div style="font-family:serif;font-size:17px;font-weight:600;margin-top:8px">${i.title}</div><div style="color:#6b6b6b;font-size:14px">${i.description}</div>${i.link?`<a href="${i.link}" style="color:#3d6b5e">查看</a>`:''}</div>`)
+document.getElementById('w').innerHTML=w
+document.getElementById('a').innerHTML=d.about.text.replace(/\n/g,'<br>')
+x('home')
+}).catch(e=>document.getElementById('l').textContent='加载失败')
+function x(id){
+document.querySelectorAll('section').forEach(s=>s.classList.remove('active'))
+document.getElementById(id).classList.add('active')
+}
+</script>
+</body>
+</html>
